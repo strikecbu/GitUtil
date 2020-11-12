@@ -28,7 +28,7 @@ public class GitTest {
             PropertyConfigurator.configure(logp);
         }
 
-        final GitCommandServiceImpl serviceAbstract = new GitCommandServiceImpl(properties);
+        Git.setEnv(properties);
 
         final String fileName = "testFile" + new Random().nextInt(100000) + ".txt";
         final String sSvnUrl = "https://github.com/strikecbu/TestSvnMigrate.git";
@@ -43,7 +43,7 @@ public class GitTest {
 
         // 一定要是新檔案才能import
 //		final long svn = Git.importToSVN(sSvnUser, sSvnPsw, sSvnPathFile, file, commitMsg);
-        String hash = serviceAbstract.importToSVN(sSvnUser, sSvnPsw, sSvnPathFile, file, commitMsg);
+        String hash = Git.importToSVN(sSvnUser, sSvnPsw, sSvnPathFile, file, commitMsg);
         System.out.println(hash);
 
 
@@ -51,37 +51,37 @@ public class GitTest {
         deleteFolder(fLocalDir.getParentFile());
         System.out.println(" === checkoutEmpFromSVN ===");
         // 將指定目錄checkout成空的 svn資料夾
-        serviceAbstract.checkoutEmpFromSVN(sSvnUser, sSvnPsw, sSvnUrl, fLocalDir);
+        Git.checkoutEmpFromSVN(sSvnUser, sSvnPsw, sSvnUrl, fLocalDir);
 
         System.out.println("=== updateToWC ===");
         // 將指定的檔案拉下來到資料夾內
-        serviceAbstract.updateToWC(sSvnUser, sSvnPsw, file, GitCommandService.DEV_TYPE);
+        Git.updateToWC(sSvnUser, sSvnPsw, file, GitCommandService.DEV_TYPE);
         // 將要更新的檔案放進來
         genFile(new File(testFolder), fileName);
         System.out.println("=== commitToSVN ===");
 //		// commit to SVN
-        final String svn1 = serviceAbstract.commitToSVN(sSvnUser, sSvnPsw, file, commitMsg, GitCommandService.DEV_TYPE);
+        final String svn1 = Git.commitToSVN(sSvnUser, sSvnPsw, file, commitMsg, GitCommandService.DEV_TYPE);
         System.out.println("svn1: " + svn1);
 
         // 取得剛剛commit的revision
-        final String fileRevision = serviceAbstract.getFileRevision(sSvnUser, sSvnPsw, sSvnPathFile);
+        final String fileRevision = Git.getFileRevision(sSvnUser, sSvnPsw, sSvnPathFile);
         System.out.println("fileRevision: " + fileRevision + ", latest update revision: " + svn1);
 
         System.out.println("=== diff ===");
         // diff file with 2 revision
         final String resultPath = new File("/Users/maiev/Downloads/testSVN", fileName).getAbsolutePath();
-        serviceAbstract.diff(sSvnUser, sSvnPsw, sSvnUrl, "/" + fileName, file.getAbsolutePath(), resultPath,
+        Git.diff(sSvnUser, sSvnPsw, sSvnUrl, "/" + fileName, file.getAbsolutePath(), resultPath,
                 svn1, hash);
 
         deleteFolder(fLocalDir.getParentFile()); // 全部清空
         System.out.println("=== checkoutFromSVN ===");
         // checkout all file from repository
-        serviceAbstract.checkoutFromSVN(sSvnUser, sSvnPsw, sSvnUrl, fLocalDir);
+        Git.checkoutFromSVN(sSvnUser, sSvnPsw, sSvnUrl, fLocalDir);
 
         deleteFolder(fLocalDir.getParentFile()); // 全部清空
         System.out.println("=== exportFromSVN ===");
         // checkout single file from repository
-        serviceAbstract.exportFromSVN(sSvnUser, sSvnPsw,sSvnUrl, "/" + fileName, fLocalDir, String.valueOf(svn1));
+        Git.exportFromSVN(sSvnUser, sSvnPsw,sSvnUrl, "/" + fileName, fLocalDir, String.valueOf(svn1));
 
 
         // copy uat
@@ -90,7 +90,7 @@ public class GitTest {
         final String sSvnUrl_uat = "https://github.com/strikecbu/TestSvnMigrate.git";
         System.out.println("=== backup ===");
         // backup 不支援直接存放在根目錄的檔案，會錯
-        serviceAbstract.backup(sSvnUser, sSvnPsw, sSvnUrl_uat, sUATDir, "", sUATZDir);
+        Git.backup(sSvnUser, sSvnPsw, sSvnUrl_uat, sUATDir, "", sUATZDir);
 
         // import
         final String testFolder2 = "/Users/maiev/Downloads/testSVN3/uat";
@@ -101,7 +101,7 @@ public class GitTest {
 
         // 一調要是新檔案才能import
         System.out.println("=== importToSVN ===");
-        final String svn2 = serviceAbstract.importToSVN(sSvnUser, sSvnPsw, sSvnPathFile2, file2, commitMsg);
+        final String svn2 = Git.importToSVN(sSvnUser, sSvnPsw, sSvnPathFile2, file2, commitMsg);
         System.out.println(svn2);
 
 
@@ -111,7 +111,7 @@ public class GitTest {
 
         // 一調要是新檔案才能import
         System.out.println("=== importToSVN ===");
-        final String svn3 = serviceAbstract.importToSVN(sSvnUser, sSvnPsw, sSvnPathFile3, file2, commitMsg);
+        final String svn3 = Git.importToSVN(sSvnUser, sSvnPsw, sSvnPathFile3, file2, commitMsg);
         System.out.println(svn3);
 
         long finishLong = System.currentTimeMillis();
