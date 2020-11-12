@@ -2,7 +2,6 @@ package com.iisigroup.git;
 
 public interface Constants {
 
-    String GIT_HOME_PATH = "sGitHomePath";
     String GIT_DEV_PROJECT_FOLDER_PATH = "sGitDevProjectFolder";
     String GIT_UAT_PROJECT_FOLDER_PATH = "sGitUatProjectFolder";
     String GIT_ACCUMULATE_PROJECT_FOLDER_PATH = "sGitAccumulateProjectFolder";

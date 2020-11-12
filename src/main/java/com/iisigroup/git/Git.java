@@ -2,17 +2,10 @@ package com.iisigroup.git;
 
 import com.iisigroup.git.service.GitCommandService;
 import com.iisigroup.git.service.impl.GitCommandServiceImpl;
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Date;
 import java.util.Properties;
-import java.util.Random;
 
 public class Git {
 
