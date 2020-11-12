@@ -26,27 +26,29 @@ public class Git {
 		//處理git source
 		String path = properties.getProperty(Constants.GIT_HOME_PATH);
 		File gitFolder = new File(path);
-		if(!gitFolder.exists()) {
-			File tempFile = null;
-			try {
-				tempFile = File.createTempFile("git.zip", "");
-			} catch (IOException e) {
-				throw new RuntimeException("Fail to create temp file.", e);
-			}
-			try (InputStream in = Git.class.getClassLoader().getResourceAsStream("PortableGit.zip");
-				 FileOutputStream outputStream = new FileOutputStream(tempFile);){
-				byte[] i = new byte[1024];
-				while (true) {
-					assert in != null;
-					if (in.read(i) == -1) break;
-					outputStream.write(i);
-				}
-				ZipUtil.unZip(tempFile, gitFolder);
-				//解壓縮後的資料夾會多一層PortableGit
-				properties.setProperty(Constants.GIT_HOME_PATH, path + File.separator + "PortableGit");
-			} catch (IOException e) {
-				throw new RuntimeException("Fail to copy and unzip git source.", e);
-			}
+		File gitExe = new File(gitFolder, "bin" + File.separator + "git.exe");
+		if(!gitExe.exists()) {
+			throw new RuntimeException("Can not found git.ext! Make sure your property sGitHomePath is correct.");
+//			File tempFile = null;
+//			try {
+//				tempFile = File.createTempFile("git.zip", "");
+//			} catch (IOException e) {
+//				throw new RuntimeException("Fail to create temp file.", e);
+//			}
+//			try (InputStream in = Git.class.getClassLoader().getResourceAsStream("PortableGit.zip");
+//				 FileOutputStream outputStream = new FileOutputStream(tempFile);){
+//				byte[] i = new byte[1024];
+//				while (true) {
+//					assert in != null;
+//					if (in.read(i) == -1) break;
+//					outputStream.write(i);
+//				}
+//				ZipUtil.unZip(tempFile, gitFolder);
+//				//解壓縮後的資料夾會多一層PortableGit
+//				properties.setProperty(Constants.GIT_HOME_PATH, path + File.separator + "PortableGit");
+//			} catch (IOException e) {
+//				throw new RuntimeException("Fail to copy and unzip git source.", e);
+//			}
 		}
 		service = new GitCommandServiceImpl(properties);
 		isSetEnv = true;
