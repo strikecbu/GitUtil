@@ -9,8 +9,6 @@ import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -35,12 +33,7 @@ public class GitCommandServiceImpl implements GitCommandService {
 
     public GitCommandServiceImpl(Properties properties) {
         this.properties = properties;
-        try {
-            URL url = getClass().getClassLoader().getResource("git_source");
-            gitHomeFolder = new File(Objects.requireNonNull(url).toURI());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Can not found git home, please set in sys.properties.");
-        }
+        gitHomeFolder = new File(properties.getProperty(Constants.GIT_HOME_PATH));
         if(!gitHomeFolder.exists())
             throw new RuntimeException("Can not found git home, please set in sys.properties.");
         // initial project folder

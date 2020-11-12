@@ -10,6 +10,7 @@ public interface Constants {
     String GIT_DEV_URL = "sGit_dev_url";
     String GIT_UAT_URL = "sGit_uat_url";
     String GIT_ACCUMULATE_URL = "sGit_accumulate_url";
+    String GIT_HOME_PATH = "sGitHomePath";
 
     enum Repository {
         DEV(GIT_USER, GIT_PSW, GIT_DEV_URL, GIT_DEV_PROJECT_FOLDER_PATH),
