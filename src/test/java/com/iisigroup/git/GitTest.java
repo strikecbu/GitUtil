@@ -6,14 +6,8 @@ import com.iisigroup.git.service.impl.GitCommandServiceImpl;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.Test;
-import org.junit.internal.runners.JUnit4ClassRunner;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Random;
@@ -25,12 +19,10 @@ public class GitTest {
 
         long startLong = System.currentTimeMillis();
         final Properties properties = new Properties();
-        try (final FileInputStream inputStream = new FileInputStream(
-                "/Users/maiev/Documents/iisi/CTBC_GIT/source/R14_Commit2SVN/properties/sys.properties")){
+        try (final InputStream inputStream = getClass().getClassLoader().getResourceAsStream("prop/sys.properties")){
             properties.load(inputStream);
         }
-        try (final FileInputStream inputStream = new FileInputStream(
-                "/Users/maiev/Documents/iisi/CTBC_GIT/source/R14_Commit2SVN/properties/Log4j.properties")){
+        try (final InputStream inputStream = getClass().getClassLoader().getResourceAsStream("prop/Log4j.properties")){
             Properties logp = new Properties();
             logp.load(inputStream);
             PropertyConfigurator.configure(logp);
