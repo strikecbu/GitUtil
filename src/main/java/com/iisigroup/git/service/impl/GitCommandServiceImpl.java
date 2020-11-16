@@ -188,12 +188,18 @@ public class GitCommandServiceImpl implements GitCommandService {
         if (commitResult.getResultCode() != 0) {
             throw new RuntimeException("Fail to commit file." + commitResult.getErrorMsg());
         }
-        String hash = commitResult.getOutputMsg().toString().split(System.lineSeparator())[0];
-        Matcher matcher = Pattern.compile("^\\[(.*)\\].*$").matcher(hash);
+
+        CommandResult logResult = gitCommand(gitHomeFolder, project.getProjectFolder(), new String[]{"log", "-1"});
+        if (logResult.getResultCode() != 0) {
+            throw new RuntimeException("Fail to get log." + logResult.getErrorMsg());
+        }
+
+        String hash = logResult.getOutputMsg().toString().split(System.lineSeparator())[0];
+        Matcher matcher = Pattern.compile("^commit\\s(.*)$").matcher(hash);
         if (matcher.find()) {
-            hash = matcher.group(1).split("\\s")[1];
+            hash = matcher.group(1).substring(0, 7); //取前七碼
         } else {
-            throw new RuntimeException("Can NOT get commit hash." + commitResult.getOutputMsg());
+            throw new RuntimeException("Can NOT get commit hash." + logResult.getOutputMsg());
         }
 
         CommandResult pushResult = gitCommand(gitHomeFolder, project.getProjectFolder(), new String[]{"push", urlEncode(project)});

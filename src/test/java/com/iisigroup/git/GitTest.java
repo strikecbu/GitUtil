@@ -5,6 +5,7 @@ import com.iisigroup.git.service.GitCommandService;
 import com.iisigroup.git.service.impl.GitCommandServiceImpl;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.PropertyConfigurator;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.*;
@@ -43,8 +44,9 @@ public class GitTest {
 
         // 一定要是新檔案才能import
 //		final long svn = Git.importToSVN(sSvnUser, sSvnPsw, sSvnPathFile, file, commitMsg);
+        System.out.println(" === importToSVN ===");
         String hash = Git.importToSVN(sSvnUser, sSvnPsw, sSvnPathFile, file, commitMsg);
-        System.out.println(hash);
+        System.out.println("importToSVN hash: " + hash);
 
 
         final File fLocalDir = new File(testFolder);
@@ -60,18 +62,19 @@ public class GitTest {
         genFile(new File(testFolder), fileName);
         System.out.println("=== commitToSVN ===");
 //		// commit to SVN
-        final String svn1 = Git.commitToSVN(sSvnUser, sSvnPsw, file, commitMsg, Type.DEV_TYPE);
-        System.out.println("svn1: " + svn1);
+        final String hash1 = Git.commitToSVN(sSvnUser, sSvnPsw, file, commitMsg, Type.DEV_TYPE);
+        System.out.println("hash1: " + hash1);
 
         // 取得剛剛commit的revision
         final String fileRevision = Git.getFileRevision(sSvnUser, sSvnPsw, sSvnPathFile);
-        System.out.println("fileRevision: " + fileRevision + ", latest update revision: " + svn1);
+        System.out.println("fileRevision: " + fileRevision + ", latest update revision: " + hash1);
+        Assert.assertEquals(fileRevision, hash1);
 
         System.out.println("=== diff ===");
         // diff file with 2 revision
         final String resultPath = new File("/Users/maiev/Downloads/testSVN", fileName).getAbsolutePath();
         Git.diff(sSvnUser, sSvnPsw, sSvnUrl, "/" + fileName, file.getAbsolutePath(), resultPath,
-                svn1, hash);
+                hash1, hash);
 
         deleteFolder(fLocalDir.getParentFile()); // 全部清空
         System.out.println("=== checkoutFromSVN ===");
@@ -81,7 +84,7 @@ public class GitTest {
         deleteFolder(fLocalDir.getParentFile()); // 全部清空
         System.out.println("=== exportFromSVN ===");
         // checkout single file from repository
-        Git.exportFromSVN(sSvnUser, sSvnPsw,sSvnUrl, "/" + fileName, fLocalDir, String.valueOf(svn1));
+        Git.exportFromSVN(sSvnUser, sSvnPsw,sSvnUrl, "/" + fileName, fLocalDir, String.valueOf(hash1));
 
 
         // copy uat
@@ -101,8 +104,8 @@ public class GitTest {
 
         // 一調要是新檔案才能import
         System.out.println("=== importToSVN ===");
-        final String svn2 = Git.importToSVN(sSvnUser, sSvnPsw, sSvnPathFile2, file2, commitMsg);
-        System.out.println(svn2);
+        final String hash2 = Git.importToSVN(sSvnUser, sSvnPsw, sSvnPathFile2, file2, commitMsg);
+        System.out.println("importToSVN hash2: " + hash2);
 
 
         final File file3 = genFile(new File(uat_folder, "staticFolder"), "static.txt");
@@ -111,8 +114,8 @@ public class GitTest {
 
         // 一調要是新檔案才能import
         System.out.println("=== importToSVN ===");
-        final String svn3 = Git.importToSVN(sSvnUser, sSvnPsw, sSvnPathFile3, file2, commitMsg);
-        System.out.println(svn3);
+        final String hash3 = Git.importToSVN(sSvnUser, sSvnPsw, sSvnPathFile3, file2, commitMsg);
+        System.out.println("importToSVN hash3: " + hash3);
 
         long finishLong = System.currentTimeMillis();
         System.out.printf("Cast %s secs %n", (finishLong - startLong)/1000);
