@@ -1,6 +1,7 @@
 package com.iisigroup.git.service.impl;
 
 import com.iisigroup.git.Constants;
+import com.iisigroup.git.Type;
 import com.iisigroup.git.model.CommandResult;
 import com.iisigroup.git.model.GitProject;
 import com.iisigroup.git.service.GitCommandService;
@@ -225,8 +226,8 @@ public class GitCommandServiceImpl implements GitCommandService {
     }
 
     @Override
-    public void updateToWC(String sSvnUser, String sSvnPsw, File fLocalFile, String reposType) throws Exception {
-        GitProject gitProject = matchProject(reposType);
+    public void updateToWC(String sSvnUser, String sSvnPsw, File fLocalFile, Type reposType) throws Exception {
+        GitProject gitProject = matchProject(reposType.getType());
         // 先同步project
         resetToHead(gitProject, "master");
         pullRemote(gitProject);
@@ -283,8 +284,8 @@ public class GitCommandServiceImpl implements GitCommandService {
     }
 
     @Override
-    public String commitToSVN(String sSvnUser, String sSvnPsw, File fLocalFile, String sDescription, String reposType) throws Exception {
-        GitProject gitProject = matchProject(reposType);
+    public String commitToSVN(String sSvnUser, String sSvnPsw, File fLocalFile, String sDescription, Type reposType) throws Exception {
+        GitProject gitProject = matchProject(reposType.getType());
         // 先同步project
         resetToHead(gitProject, "master");
         pullRemote(gitProject);
@@ -358,6 +359,7 @@ public class GitCommandServiceImpl implements GitCommandService {
         File uatFolder = new File(project.getProjectFolder(), sUATDir);
         File uatCopyFolder = new File(project.getProjectFolder(), sDelDir);
         if (!uatFolder.exists()) {
+            logger.info("Not found any uat folder, skip copy to uat copy folder.");
             // 還沒備份過
             return;
         }

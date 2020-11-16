@@ -55,12 +55,12 @@ public class GitTest {
 
         System.out.println("=== updateToWC ===");
         // 將指定的檔案拉下來到資料夾內
-        Git.updateToWC(sSvnUser, sSvnPsw, file, GitCommandService.DEV_TYPE);
+        Git.updateToWC(sSvnUser, sSvnPsw, file, Type.DEV_TYPE);
         // 將要更新的檔案放進來
         genFile(new File(testFolder), fileName);
         System.out.println("=== commitToSVN ===");
 //		// commit to SVN
-        final String svn1 = Git.commitToSVN(sSvnUser, sSvnPsw, file, commitMsg, GitCommandService.DEV_TYPE);
+        final String svn1 = Git.commitToSVN(sSvnUser, sSvnPsw, file, commitMsg, Type.DEV_TYPE);
         System.out.println("svn1: " + svn1);
 
         // 取得剛剛commit的revision

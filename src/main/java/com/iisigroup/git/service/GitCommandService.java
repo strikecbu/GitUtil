@@ -2,6 +2,7 @@ package com.iisigroup.git.service;
 
 
 import com.iisigroup.git.CommandLineUtil;
+import com.iisigroup.git.Type;
 import com.iisigroup.git.model.CommandResult;
 
 import java.io.File;
@@ -17,17 +18,13 @@ import java.util.Arrays;
  */
 public interface GitCommandService {
 
-    String DEV_TYPE = "DEV";
-    String UAT_TYPE = "UAT";
-    String ACCUMULATE_TYPE = "ACCUMULATE";
-
     String importToSVN(String sSvnUser, String sSvnPsw, String sSvnPathFile, File fOriginPathFile, String sDescription) throws Exception;
 
     void checkoutEmpFromSVN(String sSvnUser, String sSvnPsw, String sSvnUrl, File fLocalDir) throws Exception;
 
-    void updateToWC(String sSvnUser, String sSvnPsw, File fLocalFile, String reposType) throws Exception;
+    void updateToWC(String sSvnUser, String sSvnPsw, File fLocalFile, Type reposType) throws Exception;
 
-    String commitToSVN(String sSvnUser, String sSvnPsw, File fLocalFile, String sDescription, String reposType) throws Exception;
+    String commitToSVN(String sSvnUser, String sSvnPsw, File fLocalFile, String sDescription, Type reposType) throws Exception;
 
     String getFileRevision(String sSvnUser, String sSvnPsw, String sSvnPathFile) throws Exception;
 

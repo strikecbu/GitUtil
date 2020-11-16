@@ -2,13 +2,9 @@ package com.iisigroup.git;
 
 import com.iisigroup.git.service.GitCommandService;
 import com.iisigroup.git.service.impl.GitCommandServiceImpl;
-import com.util.ZipUtil;
 import org.apache.log4j.Logger;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 public class Git {
@@ -88,7 +84,7 @@ public class Git {
 	 * @param reposType GitCommandService.XXX_TYPE
 	 * @throws Exception
 	 */
-	public static void updateToWC(String sSvnUser, String sSvnPsw, File fLocalFile, String reposType)
+	public static void updateToWC(String sSvnUser, String sSvnPsw, File fLocalFile, Type reposType)
 	        throws Exception {
 		if (!isSetEnv)
 			throw new RuntimeException("Make sure setEnv method should been executed.");
@@ -107,7 +103,7 @@ public class Git {
 	 * @throws Exception
 	 */
 	public static String commitToSVN(String sSvnUser, String sSvnPsw, File fLocalFile,
-									 String sDescription, String reposType) throws Exception {
+									 String sDescription, Type reposType) throws Exception {
 		if (!isSetEnv)
 			throw new RuntimeException("Make sure setEnv method should been executed.");
 		return service.commitToSVN(sSvnUser, sSvnPsw, fLocalFile, sDescription, reposType);
