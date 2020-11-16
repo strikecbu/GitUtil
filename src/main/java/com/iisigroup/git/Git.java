@@ -3,13 +3,14 @@ package com.iisigroup.git;
 import com.iisigroup.git.service.GitCommandService;
 import com.iisigroup.git.service.impl.GitCommandServiceImpl;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
-import java.io.File;
+import java.io.*;
 import java.util.Properties;
 
 public class Git {
 
-	Logger logger = Logger.getLogger("Git");
+	private static final Logger logger = Logger.getLogger(Git.class);
 
 	private static GitCommandService service;
 	private static boolean isSetEnv = false;
@@ -19,6 +20,20 @@ public class Git {
 	}
 
 	public static void setEnv(Properties properties) {
+		File logConfig = new File("./properties/Log4j.properties");
+		Properties logProp = new Properties();
+		if(!logConfig.exists()) {
+			System.out.println("Tool had no prepare log4j config, use embed config.");
+			try(InputStream stream = Git.class.getClassLoader().getResourceAsStream("properties/Log4j" +
+					".properties");) {
+				logProp.load(stream);
+				PropertyConfigurator.configure(logProp);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		logger.info("GitUtil Loading properties...");
 		//處理git source
 		String path = properties.getProperty(Constants.GIT_HOME_PATH);
 		File gitFolder = new File(path);
