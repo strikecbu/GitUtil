@@ -91,6 +91,9 @@ public class GitCommandServiceImpl implements GitCommandService {
             resetToHead(gitProject, "master");
             pullRemote(gitProject);
         }
+        // windows 中文encode問題
+        gitCommand(gitHomeFolder, projectFolder,  new String[]{"config", "--local", "core.quotePath", "off"});
+
 
         return gitProject;
     }
@@ -110,6 +113,9 @@ public class GitCommandServiceImpl implements GitCommandService {
         CommandResult result = gitCommand(gitHomeFolder, project.getProjectFolder(), new String[]{"reset", "--hard", "origin/" + branch});
         if(result.getResultCode() != 0)
             throw new RuntimeException("Fail to reset repository. " + result.getErrorMsg());
+        CommandResult cleanResult = gitCommand(gitHomeFolder, project.getProjectFolder(), new String[]{"clean", "-fd"});
+        if(cleanResult.getResultCode() != 0)
+            throw new RuntimeException("Fail to clean repository. " + cleanResult.getErrorMsg());
         return result;
     }
 
