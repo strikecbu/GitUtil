@@ -1,8 +1,6 @@
 package com.iisigroup.git;
 
 
-import com.iisigroup.git.service.GitCommandService;
-import com.iisigroup.git.service.impl.GitCommandServiceImpl;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.Assert;
@@ -46,6 +44,7 @@ public class GitTest {
 //		final long svn = Git.importToSVN(sSvnUser, sSvnPsw, sSvnPathFile, file, commitMsg);
         System.out.println(" === importToSVN ===");
         String hash = Git.importToSVN(sSvnUser, sSvnPsw, sSvnPathFile, file, commitMsg);
+        Git.importToSVN(sSvnUser, sSvnPsw, sSvnUrl + "/" + fileName, file, commitMsg);
         System.out.println("importToSVN hash: " + hash);
 
 
@@ -61,13 +60,13 @@ public class GitTest {
 
         System.out.println("=== updateToWC ===");
         // 將指定的檔案拉下來到資料夾內
-        Git.updateToWC(sSvnUser, sSvnPsw, otherFolder, Type.DEV_TYPE);
+        Git.updateToWC(sSvnUser, sSvnPsw, new File(otherFolder, file.getName()), Type.DEV_TYPE);
         Assert.assertTrue(new File(otherFolder, file.getName()).exists());
         // 將要更新的檔案放進來
-        genFile(new File(testFolder), fileName);
+        genFile(otherFolder, fileName);
         System.out.println("=== commitToSVN ===");
 //		// commit to SVN
-        final String hash1 = Git.commitToSVN(sSvnUser, sSvnPsw, file, commitMsg, Type.DEV_TYPE);
+        final String hash1 = Git.commitToSVN(sSvnUser, sSvnPsw, new File(otherFolder, file.getName()), commitMsg, Type.DEV_TYPE);
         System.out.println("hash1: " + hash1);
 
         // 取得剛剛commit的revision
@@ -78,7 +77,7 @@ public class GitTest {
         System.out.println("=== diff ===");
         // diff file with 2 revision
         final String resultPath = new File("/Users/maiev/Downloads/testSVN", fileName).getAbsolutePath();
-        Git.diff(sSvnUser, sSvnPsw, sSvnUrl, "/" + fileName, file.getAbsolutePath(), resultPath,
+        Git.diff(sSvnUser, sSvnPsw, sSvnUrl, "/checkMe1/checkMe2/" + fileName, file.getAbsolutePath(), resultPath,
                 hash1, hash);
 
         deleteFolder(fLocalDir.getParentFile()); // 全部清空

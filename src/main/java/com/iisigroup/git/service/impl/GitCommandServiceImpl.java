@@ -9,6 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -31,6 +32,7 @@ public class GitCommandServiceImpl implements GitCommandService {
     protected final Properties properties;
     protected final File gitHomeFolder;
     protected List<GitProject> projects = new ArrayList<>();
+    public static final String REPOS_INFO_NAME = "ReposInfo.repos";
 
     public GitCommandServiceImpl(Properties properties) {
         this.properties = properties;
@@ -235,6 +237,13 @@ public class GitCommandServiceImpl implements GitCommandService {
         if (!fLocalDir.exists()) {
             fLocalDir.mkdirs();
         }
+        // 要記錄對應的repos資訊
+        File file = new File(fLocalDir, REPOS_INFO_NAME);
+        try {
+            FileUtils.writeStringToFile(file, sSvnUrl, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException("Fail to write repos info file.");
+        }
     }
 
     @Override
@@ -245,7 +254,7 @@ public class GitCommandServiceImpl implements GitCommandService {
         pullRemote(gitProject);
 
         // 取出target file to fLocal
-        File file = matchGitAndLocalFile(gitProject.getProjectFolder(), fLocalFile);
+        File file = matchGitAndLocalFile(gitProject.getProjectFolder(), fLocalFile, gitProject);
         FileUtils.copyFile(file, fLocalFile, true);
     }
 
@@ -267,16 +276,34 @@ public class GitCommandServiceImpl implements GitCommandService {
      * 對應git folder and local temp folder，取出git folder中的file
      * @param gitProjectFolder git base folder
      * @param localFile local file
+     * @param project
      * @return file in git folder
      */
-    private File matchGitAndLocalFile(File gitProjectFolder, File localFile) {
-        List<File> fileList = catchAllFiles(gitProjectFolder).stream()
+    private File matchGitAndLocalFile(File gitProjectFolder, File localFile, GitProject project) {
+        File info = new File(localFile.getParentFile(), REPOS_INFO_NAME);
+        List<File> fileList = new ArrayList<>();
+        if (info.exists()) {
+            try {
+                final String infoStr = FileUtils.readFileToString(info, StandardCharsets.UTF_8);
+                String gitFilePath = infoStr.replaceAll("^(.*?)[/\\\\]?$", "$1").concat(File.separator).concat(localFile.getName());
+                String filePath = gitFilePath.replace(project.getUrl(), "");
+                fileList = catchAllFiles(gitProjectFolder).stream()
+                        .filter(file -> {
+                            String path = file.getAbsolutePath().replace(gitProjectFolder.getAbsolutePath(), "");
+                            return filePath.equals(path);
+                        }).collect(Collectors.toList());
+            } catch (IOException e) {
+                throw new RuntimeException("Can NOT read info file cause: " + e);
+            }
+        } else {
+            fileList = catchAllFiles(gitProjectFolder).stream()
                 .filter(file -> {
                     String path = file.getAbsolutePath();
                     path = path.replace(gitProjectFolder.getAbsolutePath(), "");
                     Matcher matcher = Pattern.compile("^.*" + path + "$").matcher(localFile.getAbsolutePath());
                     return matcher.find();
                 }).collect(Collectors.toList());
+        }
         if (fileList.size() != 1) {
             throw new RuntimeException(String.format("It should be only one file. But found %s, file: %s", fileList.size(), localFile.getAbsolutePath()));
         }
@@ -302,7 +329,7 @@ public class GitCommandServiceImpl implements GitCommandService {
         resetToHead(gitProject, "master");
         pullRemote(gitProject);
 
-        File gitFile = matchGitAndLocalFile(gitProject.getProjectFolder(), fLocalFile);
+        File gitFile = matchGitAndLocalFile(gitProject.getProjectFolder(), fLocalFile, gitProject);
         FileUtils.copyFile(fLocalFile, gitFile, true);
 
         return commitFileAndPush(gitProject, gitFile, sDescription);
