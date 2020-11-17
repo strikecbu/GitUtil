@@ -83,7 +83,7 @@ public class GitTest {
         deleteFolder(fLocalDir.getParentFile()); // 全部清空
         System.out.println("=== checkoutFromSVN ===");
         // checkout all file from repository
-        Git.checkoutFromSVN(sSvnUser, sSvnPsw, sSvnUrl, fLocalDir);
+        Git.checkoutFromSVN(sSvnUser, sSvnPsw, sSvnUrl + "/checkMe1/checkMe2/", fLocalDir);
 
         deleteFolder(fLocalDir.getParentFile()); // 全部清空
         System.out.println("=== exportFromSVN ===");

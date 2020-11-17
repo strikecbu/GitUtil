@@ -181,6 +181,10 @@ public class GitCommandServiceImpl implements GitCommandService {
     }
 
     public String commitFileAndPush(GitProject project, File commitFile, String commitMsg) {
+        if(commitMsg == null || "".equals(commitMsg)) {
+            logger.info("CommitMsg is empty, use 'no comment' instead.");
+            commitMsg = "no comment";
+        }
         CommandResult addResult = gitCommand(gitHomeFolder, project.getProjectFolder(), new String[]{"add", commitFile.getAbsolutePath()});
         if (addResult.getResultCode() != 0) {
             throw new RuntimeException("Fail to add file to stage." + addResult.getErrorMsg());
@@ -238,8 +242,13 @@ public class GitCommandServiceImpl implements GitCommandService {
             fLocalDir.mkdirs();
         }
         // 要記錄對應的repos資訊
+        writeReposInfo(sSvnUrl, fLocalDir);
+    }
+
+    private void writeReposInfo(String sSvnUrl, File fLocalDir) {
         File file = new File(fLocalDir, REPOS_INFO_NAME);
         try {
+            logger.info("Write repos info to " + fLocalDir.getAbsolutePath());
             FileUtils.writeStringToFile(file, sSvnUrl, StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException("Fail to write repos info file.");
@@ -434,11 +443,17 @@ public class GitCommandServiceImpl implements GitCommandService {
         resetToHead(gitProject, "master");
         pullRemote(gitProject);
 
-        for (File file : Objects.requireNonNull(gitProject.getProjectFolder().listFiles())) {
-            if(file.isDirectory()) {
-                FileUtils.copyDirectoryToDirectory(file, fLocalDir);
-            } else {
-                FileUtils.copyFileToDirectory(file, fLocalDir, true);
+        // 要記錄對應的repos資訊
+        writeReposInfo(sSvnUrl, fLocalDir);
+
+        File targetFolder = new File(gitProject.getProjectFolder(), sSvnUrl.replace(gitProject.getUrl(), ""));
+        if (targetFolder.exists()) {
+            for (File file : Objects.requireNonNull(targetFolder.listFiles())) {
+                if (file.isDirectory()) {
+                    FileUtils.copyDirectoryToDirectory(file, fLocalDir);
+                } else {
+                    FileUtils.copyFileToDirectory(file, fLocalDir, true);
+                }
             }
         }
     }
