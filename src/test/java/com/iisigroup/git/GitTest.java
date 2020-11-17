@@ -38,7 +38,7 @@ public class GitTest {
         final String sSvnPsw = "andy1234";
         final String testFolder = "/Users/maiev/Downloads/testSVN2/repo";
         final File file = genFile(new File(testFolder), fileName);
-        final String sSvnPathFile = sSvnUrl + "/" + fileName;
+        final String sSvnPathFile = sSvnUrl + "/checkMe1/checkMe2/" + fileName;
         System.out.println("Gen file: " + file.getName());
         final String commitMsg = "autoimport123";
 
@@ -53,11 +53,16 @@ public class GitTest {
         deleteFolder(fLocalDir.getParentFile());
         System.out.println(" === checkoutEmpFromSVN ===");
         // 將指定目錄checkout成空的 svn資料夾
-        Git.checkoutEmpFromSVN(sSvnUser, sSvnPsw, sSvnUrl, fLocalDir);
+        File otherFolder = new File("./temp");
+        if (!otherFolder.exists()) {
+            otherFolder.mkdirs();
+        }
+        Git.checkoutEmpFromSVN(sSvnUser, sSvnPsw, sSvnUrl + "/checkMe1/checkMe2/", otherFolder);
 
         System.out.println("=== updateToWC ===");
         // 將指定的檔案拉下來到資料夾內
-        Git.updateToWC(sSvnUser, sSvnPsw, file, Type.DEV_TYPE);
+        Git.updateToWC(sSvnUser, sSvnPsw, otherFolder, Type.DEV_TYPE);
+        Assert.assertTrue(new File(otherFolder, file.getName()).exists());
         // 將要更新的檔案放進來
         genFile(new File(testFolder), fileName);
         System.out.println("=== commitToSVN ===");
