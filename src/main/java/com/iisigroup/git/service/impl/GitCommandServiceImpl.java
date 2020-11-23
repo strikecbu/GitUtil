@@ -94,8 +94,7 @@ public class GitCommandServiceImpl implements GitCommandService {
             pullRemote(gitProject);
         }
         // windows 中文encode問題
-        gitCommand(gitHomeFolder, projectFolder,  new String[]{"config", "--local", "core.quotePath", "off"});
-
+        gitCommand(gitHomeFolder, gitProject.getProjectFolder(),  new String[]{"config", "--local", "core.quotePath", "off"});
 
         return gitProject;
     }
