@@ -203,7 +203,7 @@ public class GitCommandServiceImpl implements GitCommandService {
         String hash = logResult.getOutputMsg().toString().split(System.lineSeparator())[0];
         Matcher matcher = Pattern.compile("^commit\\s(.*)$").matcher(hash);
         if (matcher.find()) {
-            hash = matcher.group(1).substring(0, 7); //取前七碼
+            hash = matcher.group(1);
         } else {
             throw new RuntimeException("Can NOT get commit hash." + logResult.getOutputMsg());
         }
@@ -357,7 +357,7 @@ public class GitCommandServiceImpl implements GitCommandService {
             throw new RuntimeException(String.format("Can not get version from %s, message: s", gitTargetFile.getAbsolutePath(), logResult.getErrorMsg()));
         }
         String lineOne = logResult.getOutputMsg().toString().split(System.lineSeparator())[0];
-        return lineOne.split("\\s")[1].substring(0,7);
+        return lineOne.split("\\s")[1];
     }
 
     @Override
