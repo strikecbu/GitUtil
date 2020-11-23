@@ -10,6 +10,7 @@ import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Enumeration;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -58,12 +59,23 @@ public class Git {
 		if(!gitExe.exists()) {
 			throw new RuntimeException("Can not found git.ext! Make sure your property sGitHomePath is correct.");
 		}
+		logProperties(properties);
 		// 處理密碼轉換
 		String pswBase64 = properties.getProperty(Constants.GIT_PSW);
 		String decodePsw = new String(Base64.getDecoder().decode(pswBase64), StandardCharsets.UTF_8);
 		properties.setProperty(Constants.GIT_PSW, decodePsw);
 		service = new GitCommandServiceImpl(properties);
 		isSetEnv = true;
+	}
+
+	private static void logProperties(Properties properties) {
+		Enumeration<?> names = properties.propertyNames();
+		logger.info("Properties Info : ");
+		while (names.hasMoreElements()) {
+			Object key = names.nextElement();
+			Object val = properties.get(key);
+			logger.warn(String.format("[%s] - %s", key, val));
+		}
 	}
 
 
