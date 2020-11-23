@@ -6,9 +6,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -40,11 +38,15 @@ public class Git {
 			}
 		}
 
-		try {
-			File versionFile = new File(Objects.requireNonNull(Git.class.getClassLoader().getResource("version")).toURI());
-			String version = FileUtils.readFileToString(versionFile, StandardCharsets.UTF_8);
+		// read version file and log
+		try (
+			InputStream stream = Git.class.getClassLoader().getResourceAsStream("version");
+			InputStreamReader reader = new InputStreamReader(Objects.requireNonNull(stream));
+			BufferedReader bufferedReader = new BufferedReader(reader)
+		) {
+			String version = bufferedReader.readLine();
 			logger.info("Git util version Info: " + version);
-		} catch (URISyntaxException | IOException e) {
+		} catch (IOException e) {
 			logger.warn("Can NOT read version info.", e);
 		}
 
