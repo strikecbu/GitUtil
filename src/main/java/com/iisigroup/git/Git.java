@@ -2,12 +2,17 @@ package com.iisigroup.git;
 
 import com.iisigroup.git.service.GitCommandService;
 import com.iisigroup.git.service.impl.GitCommandServiceImpl;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Objects;
 import java.util.Properties;
 
 public class Git {
@@ -33,6 +38,14 @@ public class Git {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+
+		try {
+			File versionFile = new File(Objects.requireNonNull(Git.class.getClassLoader().getResource("version")).toURI());
+			String version = FileUtils.readFileToString(versionFile, StandardCharsets.UTF_8);
+			logger.info("Git util version Info: " + version);
+		} catch (URISyntaxException | IOException e) {
+			logger.warn("Can NOT read version info.", e);
 		}
 
 		logger.info("GitUtil Loading properties...");
