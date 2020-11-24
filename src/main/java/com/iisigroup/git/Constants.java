@@ -9,7 +9,7 @@ public interface Constants {
     String GIT_ACCUMULATE_PROJECT_FOLDER_PATH = "sGitAccumulateProjectFolder";
     String GIT_USER = "sGitUser";
     String GIT_PSW = "sGitPsw";
-    String GIT_DEV_URL = "sGit_dev_url";
+    String GIT_DEV_URL = "sGit_trunk_url";
     String GIT_SIT_URL = "sGit_sit_url";
     String GIT_UAT_URL = "sGit_uat_url";
     String GIT_PROD_URL = "sGit_prod_url";

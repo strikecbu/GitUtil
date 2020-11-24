@@ -57,7 +57,7 @@ public class Git {
 		File gitFolder = new File(path);
 		File gitExe = new File(gitFolder, "bin" + File.separator + "git.exe");
 		if(!gitExe.exists()) {
-			throw new RuntimeException("Can not found git.ext! Make sure your property sGitHomePath is correct.");
+			throw new RuntimeException("Can not found git.exe! Make sure your property sGitHomePath is correct.");
 		}
 		logProperties(properties);
 		// 處理密碼轉換
