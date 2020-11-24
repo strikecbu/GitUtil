@@ -61,7 +61,7 @@ public class Git {
 		}
 		logProperties(properties);
 		// 處理密碼轉換
-		String pswBase64 = properties.getProperty(Constants.GIT_PSW);
+		String pswBase64 = properties.getProperty(Constants.GIT_PSW).trim();
 		String decodePsw = new String(Base64.getDecoder().decode(pswBase64), StandardCharsets.UTF_8);
 		properties.setProperty(Constants.GIT_PSW, decodePsw);
 		service = new GitCommandServiceImpl(properties);
